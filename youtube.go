@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"time"
 )
 
 const (
@@ -48,7 +49,7 @@ func NewYouTubeClient(apiKey string) (*YouTubeClient, error) {
 	}, nil
 }
 
-func (c *YouTubeClient) ListRecentVideosFromChannels(channelIds []string, maxResults int) error {
+func (c *YouTubeClient) ListRecentVideosFromChannels(channelIds []string, maxResults int, delta time.Duration) error {
 	ytSearchUrl, _ := url.Parse("/youtube/v3/search")
 	req, err := http.NewRequest("GET", c.apiRootUrl.ResolveReference(ytSearchUrl).String(), nil)
 	if err != nil {
@@ -60,6 +61,7 @@ func (c *YouTubeClient) ListRecentVideosFromChannels(channelIds []string, maxRes
 	q.Set("part", "snippet,id")
 	q.Set("order", "date")
 	q.Set("maxResults", strconv.Itoa(maxResults))
+	q.Set("publishedAfter", time.Now().Add(-1*delta).Format(time.RFC3339))
 	for _, cid := range channelIds {
 		q.Add("channelId", cid)
 	}

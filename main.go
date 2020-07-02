@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	"os"
+	"strconv"
+	"time"
 )
 
 func main() {
@@ -11,7 +13,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	ytClient.ListRecentVideosFromChannels([]string{os.Getenv("FOOD_WISHES_CHANNEL_ID")}, 5)
+	deltaInt, err := strconv.Atoi(os.Getenv("YT_DELTA_MINUTES"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ytClient.ListRecentVideosFromChannels([]string{os.Getenv("FOOD_WISHES_CHANNEL_ID")}, 5, time.Duration(deltaInt)*time.Minute)
 
 	dClient, err := NewDiscordClient(os.Getenv("DISCORD_BOT_TOKEN"), os.Getenv("DISCORD_CHANNEL_ID"))
 	if err != nil {
