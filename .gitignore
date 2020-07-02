@@ -14,4 +14,8 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-local.env
+local.*
+youtube-discord-bot
+youtube-discord-bot.zip
+.terraform
+terraform.tfstate*

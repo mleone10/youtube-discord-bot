@@ -14,7 +14,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	deltaInt, err := strconv.Atoi(os.Getenv("YT_DELTA_MINUTES"))
+	deltaInt, err := strconv.Atoi(os.Getenv("DELTA_MINUTES"))
 	if err != nil {
 		log.Fatal(err)
 	}

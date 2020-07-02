@@ -37,3 +37,6 @@
 1. Deploy the bot to AWS
 
     TBD
+
+## Credit
+* Terraform configuration and Makefile inspired by [snsinfu/terraform-lambda-example](https://github.com/snsinfu/terraform-lambda-example)
