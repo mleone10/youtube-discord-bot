@@ -14,7 +14,8 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-local.*
+local.tfvars
+setenv.sh
 lambdabot
 localbot
 youtube-discord-bot.zip
