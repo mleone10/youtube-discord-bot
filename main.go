@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -18,7 +19,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	videos, err := ytc.ListRecentVideosFromChannels([]string{os.Getenv("YT_CHANNEL_IDS")}, 5, time.Duration(deltaInt)*time.Minute)
+	videos, err := ytc.ListRecentVideosForUsernames(strings.Split(os.Getenv("YT_CHANNELS"), ","), time.Duration(deltaInt)*time.Minute)
 	if err != nil {
 		log.Fatal(err)
 	}

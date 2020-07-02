@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -36,6 +36,14 @@ type YouTubeClient struct {
 	apiKey     string
 }
 
+type YouTubeChannelResponse struct {
+	Items []ChannelItem `json:"items"`
+}
+
+type ChannelItem struct {
+	Id string `json:"id"`
+}
+
 func NewYouTubeClient(apiKey string) (*YouTubeClient, error) {
 	url, err := url.Parse(youtubeApiRoot)
 	if err != nil {
@@ -49,7 +57,59 @@ func NewYouTubeClient(apiKey string) (*YouTubeClient, error) {
 	}, nil
 }
 
-func (c *YouTubeClient) ListRecentVideosFromChannels(channelIds []string, maxResults int, delta time.Duration) ([]Item, error) {
+func (c *YouTubeClient) ListRecentVideosForUsernames(usernames []string, delta time.Duration) ([]Item, error) {
+	var channelIds []string
+	for _, u := range usernames {
+		cid, err := c.getChannelId(u)
+		if err != nil {
+			return nil, err
+		}
+		channelIds = append(channelIds, cid)
+	}
+
+	var items []Item
+	for _, cid := range channelIds {
+		newItems, err := c.getRecentVideos(cid, delta)
+		if err != nil {
+			return nil, err
+		}
+
+		items = append(items, newItems...)
+	}
+
+	return items, nil
+}
+
+func (c *YouTubeClient) getChannelId(username string) (string, error) {
+	ytChannelSearchUrl, _ := url.Parse("/youtube/v3/channels")
+	req, err := http.NewRequest("GET", c.apiRootUrl.ResolveReference(ytChannelSearchUrl).String(), nil)
+	if err != nil {
+		return "", err
+	}
+
+	q := url.Values{}
+	q.Set("key", c.apiKey)
+	q.Set("part", "id")
+	q.Set("forUsername", username)
+	req.URL.RawQuery = q.Encode()
+
+	client := http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+
+	var parsedResponse YouTubeChannelResponse
+	parseResponse(resp, &parsedResponse)
+
+	if l := len(parsedResponse.Items); l != 1 {
+		return "", fmt.Errorf("Expected 1 channel ID for username %s, found %d", username, l)
+	}
+
+	return parsedResponse.Items[0].Id, nil
+}
+
+func (c *YouTubeClient) getRecentVideos(channelId string, delta time.Duration) ([]Item, error) {
 	ytSearchUrl, _ := url.Parse("/youtube/v3/search")
 	req, err := http.NewRequest("GET", c.apiRootUrl.ResolveReference(ytSearchUrl).String(), nil)
 	if err != nil {
@@ -60,11 +120,9 @@ func (c *YouTubeClient) ListRecentVideosFromChannels(channelIds []string, maxRes
 	q.Set("key", c.apiKey)
 	q.Set("part", "snippet,id")
 	q.Set("order", "date")
-	q.Set("maxResults", strconv.Itoa(maxResults))
+	q.Set("maxResults", strconv.Itoa(5))
 	q.Set("publishedAfter", time.Now().Add(-1*delta).Format(time.RFC3339))
-	for _, cid := range channelIds {
-		q.Add("channelId", cid)
-	}
+	q.Set("channelId", channelId)
 	req.URL.RawQuery = q.Encode()
 
 	client := http.Client{}
@@ -75,8 +133,6 @@ func (c *YouTubeClient) ListRecentVideosFromChannels(channelIds []string, maxRes
 
 	var parsedResponse YouTubeSearchResponse
 	parseResponse(resp, &parsedResponse)
-
-	log.Printf("%+v", parsedResponse)
 
 	return parsedResponse.Items, nil
 }
