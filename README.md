@@ -24,7 +24,7 @@
     export YT_API_KEY=<YouTube API Key>
     export YT_DELTA_MINUTES=<variable delta minutes to check, i.e. "30" for last 30 minutes>
     export YT_CHANNELS=<comma-delimited list of YouTube channel names>
-    export DISCORD_BOT_TOKEN=<Discord bot API token
+    export DISCORD_BOT_TOKEN=<Discord bot API token>
     export DISCORD_CHANNEL_ID=<Target Discord channel ID>
     ```
     
