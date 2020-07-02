@@ -1,6 +1,3 @@
-run: build
-	./setenv.sh && ./localbot
-
 clean:
 	rm -rf localbot lambdabot youtube-discord-bot.zip
 

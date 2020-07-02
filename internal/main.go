@@ -27,8 +27,12 @@ func Run() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	if len(videos) == 0 {
+		log.Print("No new videos found")
+		return
+	}
 
-	log.Printf("Attempting to post  %d videos", len(videos))
+	log.Printf("Attempting to post %d videos", len(videos))
 
 	dc, err := NewDiscordClient(os.Getenv("DISCORD_BOT_TOKEN"), os.Getenv("DISCORD_CHANNEL_ID"))
 	if err != nil {
