@@ -10,7 +10,7 @@ variable "delta_minutes" {}
 resource "aws_lambda_function" "youtube_discord_bot" {
   function_name    = "youtube-discord-bot"
   filename         = "youtube-discord-bot.zip"
-  handler          = "youtube-discord-bot"
+  handler          = "lambdabot"
   source_code_hash = filebase64sha256("youtube-discord-bot.zip")
   role             = aws_iam_role.youtube_discord_bot.arn
   runtime          = "go1.x"

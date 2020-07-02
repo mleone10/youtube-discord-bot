@@ -15,7 +15,8 @@
 # vendor/
 
 local.*
-youtube-discord-bot
+lambdabot
+localbot
 youtube-discord-bot.zip
 .terraform
 terraform.tfstate*

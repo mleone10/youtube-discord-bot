@@ -1,4 +1,4 @@
-package main
+package bot
 
 import (
 	"log"
@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func main() {
+func Run() {
 	ytc, err := NewYouTubeClient(os.Getenv("YT_API_KEY"))
 	if err != nil {
 		log.Fatal(err)
@@ -19,12 +19,16 @@ func main() {
 		log.Fatal(err)
 	}
 
-	videos, err := ytc.ListRecentVideosForUsernames(strings.Split(os.Getenv("YT_CHANNELS"), ","), time.Duration(deltaInt)*time.Minute)
+	ytChannels := strings.Split(os.Getenv("YT_CHANNELS"), ",")
+
+	log.Printf("Searching for videos from the past %d minutes from %d channels: %s", deltaInt, len(ytChannels), ytChannels)
+
+	videos, err := ytc.ListRecentVideosForUsernames(ytChannels, time.Duration(deltaInt)*time.Minute)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Printf("Found %d videos to post", len(videos))
+	log.Printf("Attempting to post  %d videos", len(videos))
 
 	dc, err := NewDiscordClient(os.Getenv("DISCORD_BOT_TOKEN"), os.Getenv("DISCORD_CHANNEL_ID"))
 	if err != nil {
@@ -40,4 +44,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	log.Println("Successfully posted videos to Discord")
 }

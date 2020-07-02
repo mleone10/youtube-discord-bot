@@ -1,11 +1,15 @@
+run: build
+	./setenv.sh && ./localbot
+
 clean:
-	rm -rf youtube-discord-bot youtube-discord-bot.zip
+	rm -rf localbot lambdabot youtube-discord-bot.zip
 
 build:
-	go build ./...
+	go build ./cmd/lambdabot/...
+	go build ./cmd/localbot/...
 
 package: build
-	zip youtube-discord-bot.zip youtube-discord-bot
+	zip youtube-discord-bot.zip lambdabot
 
 deploy: package
 	terraform init
