@@ -14,7 +14,7 @@
 
 1. Generate a YouTube API Key
 
-    Follow YouTube's instructions (here)[https://developers.google.com/youtube/v3/getting-started].  Create new credentials and note the **API token**.
+    Follow YouTube's instructions [here](https://developers.google.com/youtube/v3/getting-started).  Create new credentials and note the **API token**.
 
 1. Test your credentials
 
