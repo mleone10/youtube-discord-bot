@@ -27,22 +27,6 @@ resource "aws_lambda_function" "youtube_discord_bot" {
   }
 }
 
-resource "aws_iam_role" "youtube_discord_bot" {
-  name               = "youtube-discord-bot-role"
-  assume_role_policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": {
-    "Action": "sts:AssumeRole",
-    "Principal": {
-      "Service": "lambda.amazonaws.com"
-    },
-    "Effect": "Allow"
-  }
-}
-POLICY
-}
-
 resource "aws_cloudwatch_event_rule" "youtube_discord_bot_event_rule" {
   name                = "youtube-discord-bot-event-rule"
   description         = "Triggers youtube-discord-bot"
@@ -61,4 +45,25 @@ resource "aws_lambda_permission" "youtube_discord_bot_permission" {
   function_name = aws_lambda_function.youtube_discord_bot.function_name
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.youtube_discord_bot_event_rule.arn
+}
+
+resource "aws_iam_role" "youtube_discord_bot" {
+  name               = "youtube-discord-bot-role"
+  assume_role_policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": {
+    "Action": "sts:AssumeRole",
+    "Principal": {
+      "Service": "lambda.amazonaws.com"
+    },
+    "Effect": "Allow"
+  }
+}
+POLICY
+}
+
+resource "aws_iam_role_policy_attachment" "managed_policy_attachment" {
+  role       = aws_iam_role.youtube_discord_bot.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
