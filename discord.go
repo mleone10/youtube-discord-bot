@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -44,7 +45,7 @@ func (dc *DiscordClient) PostVideos(vs []Postable) error {
 }
 
 func (dc *DiscordClient) PostVideo(v Postable) error {
-	_, err := dc.client.ChannelMessageSend(dc.channelId, MessageString(v))
+	_, err := dc.client.ChannelMessageSend(dc.channelId, messageString(v))
 	if err != nil {
 		return err
 	}
@@ -52,6 +53,6 @@ func (dc *DiscordClient) PostVideo(v Postable) error {
 	return nil
 }
 
-func MessageString(v Postable) string {
-	return fmt.Sprintf("**%s**\nhttps://www.youtube.com/watch?v=%s", v.Title(), v.Id())
+func messageString(v Postable) string {
+	return fmt.Sprintf("**%s**\nhttps://www.youtube.com/watch?v=%s", html.UnescapeString(v.Title()), v.Id())
 }
