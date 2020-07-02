@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -143,4 +144,12 @@ func (i Item) Id() string {
 
 func (i Item) Title() string {
 	return i.Snippet.Title
+}
+
+func parseResponse(r *http.Response, data interface{}) error {
+	err := json.NewDecoder(r.Body).Decode(data)
+	if err != nil {
+		return err
+	}
+	return nil
 }

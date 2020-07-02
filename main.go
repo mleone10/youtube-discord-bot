@@ -24,6 +24,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	log.Printf("Found %d videos to post", len(videos))
+
 	dc, err := NewDiscordClient(os.Getenv("DISCORD_BOT_TOKEN"), os.Getenv("DISCORD_CHANNEL_ID"))
 	if err != nil {
 		log.Fatal(err)
