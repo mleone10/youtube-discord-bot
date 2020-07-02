@@ -12,4 +12,14 @@ func main() {
 	}
 
 	ytClient.ListRecentVideosFromChannels([]string{os.Getenv("FOOD_WISHES_CHANNEL_ID")}, 5)
+
+	dClient, err := NewDiscordClient(os.Getenv("DISCORD_BOT_TOKEN"), os.Getenv("DISCORD_CHANNEL_ID"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = dClient.PostVideo(&Video{title: "Test Title", id: "I7OcL8j6rhk"})
+	if err != nil {
+		log.Fatal(err)
+	}
 }
