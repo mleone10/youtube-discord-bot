@@ -42,3 +42,23 @@ resource "aws_iam_role" "youtube_discord_bot" {
 }
 POLICY
 }
+
+resource "aws_cloudwatch_event_rule" "youtube_discord_bot_event_rule" {
+  name                = "youtube-discord-bot-event-rule"
+  description         = "Triggers youtube-discord-bot"
+  schedule_expression = "rate(${var.delta_minutes} minutes)"
+}
+
+resource "aws_cloudwatch_event_target" "youtube_discord_bot_event_target" {
+  rule      = aws_cloudwatch_event_rule.youtube_discord_bot_event_rule.name
+  target_id = "youtube_discord_bot"
+  arn       = aws_lambda_function.youtube_discord_bot.arn
+}
+
+resource "aws_lambda_permission" "youtube_discord_bot_permission" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.youtube_discord_bot.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.youtube_discord_bot_event_rule.arn
+}
