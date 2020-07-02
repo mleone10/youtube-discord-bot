@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	ytClient, err := NewYouTubeClient(os.Getenv("YT_API_KEY"))
+	ytc, err := NewYouTubeClient(os.Getenv("YT_API_KEY"))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -18,14 +18,22 @@ func main() {
 		log.Fatal(err)
 	}
 
-	ytClient.ListRecentVideosFromChannels([]string{os.Getenv("FOOD_WISHES_CHANNEL_ID")}, 5, time.Duration(deltaInt)*time.Minute)
-
-	dClient, err := NewDiscordClient(os.Getenv("DISCORD_BOT_TOKEN"), os.Getenv("DISCORD_CHANNEL_ID"))
+	videos, err := ytc.ListRecentVideosFromChannels([]string{os.Getenv("YT_CHANNEL_IDS")}, 5, time.Duration(deltaInt)*time.Minute)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = dClient.PostVideo(&Video{title: "Test Title", id: "I7OcL8j6rhk"})
+	dc, err := NewDiscordClient(os.Getenv("DISCORD_BOT_TOKEN"), os.Getenv("DISCORD_CHANNEL_ID"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var ls []Postable
+	for _, v := range videos {
+		ls = append(ls, v)
+	}
+
+	err = dc.PostVideos(ls)
 	if err != nil {
 		log.Fatal(err)
 	}

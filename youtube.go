@@ -17,7 +17,7 @@ type YouTubeSearchResponse struct {
 }
 
 type Item struct {
-	Id      ItemId  `json:"id"`
+	ItemId  ItemId  `json:"id"`
 	Snippet Snippet `json:"snippet"`
 }
 
@@ -49,11 +49,11 @@ func NewYouTubeClient(apiKey string) (*YouTubeClient, error) {
 	}, nil
 }
 
-func (c *YouTubeClient) ListRecentVideosFromChannels(channelIds []string, maxResults int, delta time.Duration) error {
+func (c *YouTubeClient) ListRecentVideosFromChannels(channelIds []string, maxResults int, delta time.Duration) ([]Item, error) {
 	ytSearchUrl, _ := url.Parse("/youtube/v3/search")
 	req, err := http.NewRequest("GET", c.apiRootUrl.ResolveReference(ytSearchUrl).String(), nil)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	q := url.Values{}
@@ -70,7 +70,7 @@ func (c *YouTubeClient) ListRecentVideosFromChannels(channelIds []string, maxRes
 	client := http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	var parsedResponse YouTubeSearchResponse
@@ -78,6 +78,13 @@ func (c *YouTubeClient) ListRecentVideosFromChannels(channelIds []string, maxRes
 
 	log.Printf("%+v", parsedResponse)
 
-	// TODO: This should actually return something...
-	return nil
+	return parsedResponse.Items, nil
+}
+
+func (i Item) Id() string {
+	return i.ItemId.VideoId
+}
+
+func (i Item) Title() string {
+	return i.Snippet.Title
 }

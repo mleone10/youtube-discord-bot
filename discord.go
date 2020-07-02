@@ -11,9 +11,9 @@ type DiscordClient struct {
 	channelId string
 }
 
-type Video struct {
-	title string
-	id    string
+type Postable interface {
+	Title() string
+	Id() string
 }
 
 func NewDiscordClient(token, channelId string) (*DiscordClient, error) {
@@ -33,8 +33,18 @@ func NewDiscordClient(token, channelId string) (*DiscordClient, error) {
 	}, nil
 }
 
-func (dc *DiscordClient) PostVideo(v *Video) error {
-	_, err := dc.client.ChannelMessageSend(dc.channelId, v.MessageString())
+func (dc *DiscordClient) PostVideos(vs []Postable) error {
+	for _, v := range vs {
+		err := dc.PostVideo(v)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (dc *DiscordClient) PostVideo(v Postable) error {
+	_, err := dc.client.ChannelMessageSend(dc.channelId, MessageString(v))
 	if err != nil {
 		return err
 	}
@@ -42,6 +52,6 @@ func (dc *DiscordClient) PostVideo(v *Video) error {
 	return nil
 }
 
-func (v *Video) MessageString() string {
-	return fmt.Sprintf("**%s**\nhttps://www.youtube.com/watch?v=%s", v.title, v.id)
+func MessageString(v Postable) string {
+	return fmt.Sprintf("**%s**\nhttps://www.youtube.com/watch?v=%s", v.Title(), v.Id())
 }
