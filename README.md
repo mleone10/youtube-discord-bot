@@ -4,7 +4,7 @@
 ## Setup
 1. Create a Discord Bot and invite it to your server
 
-    Visit the Discord Developer Portal, create a new application, and add a bot.  Take note of the application's **client ID** and the bot's **API token**.
+    Visit the [Discord Developer Portal](https://discord.com/developers/applications), create a new application, and add a bot.  Take note of the application's **client ID** and the bot's **API token**.
     
     Discord bots join channels when guild admins click on invite links like these.  Add your client ID to the below URL and navigate to it in a browser.  The permission parameter specifies which accesses the bot will be granted (in this case, permission to send messages and embed links).
 
