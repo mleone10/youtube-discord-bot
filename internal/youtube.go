@@ -63,9 +63,11 @@ func (c *YouTubeClient) ListRecentVideosForUsernames(usernames []string, delta t
 	for _, u := range usernames {
 		cid, err := c.getChannelId(u)
 		if err != nil {
-			return nil, err
+			// If we couldn't find a channel for the given username, the "username" might actually be a channel ID.  We'll search for it instead.
+			channelIds = append(channelIds, u)
+		} else {
+			channelIds = append(channelIds, cid)
 		}
-		channelIds = append(channelIds, cid)
 	}
 
 	var items []Item
